@@ -1,0 +1,10 @@
+*.txt
+*.vscode
+*.py
+*.ipynb
+*.png
+*.pptx
+*.odt
+*.exe
+
+
