@@ -18,19 +18,16 @@ int max_of_mins_sequential(const std::vector<std::vector<int>>& matrix) {
     return max_of_mins;
 }
 
-// Функция для параллельного выполнения
+// Функция для параллельного выполнения с использованием редукции
 int max_of_mins_parallel(const std::vector<std::vector<int>>& matrix) {
     int max_of_mins = std::numeric_limits<int>::min();
-    #pragma omp parallel for
+    #pragma omp parallel for reduction(max:max_of_mins)
     for (int i = 0; i < matrix.size(); i++) {
         int min_in_row = std::numeric_limits<int>::max();
         for (int j = 0; j < matrix[i].size(); j++) {
             if (matrix[i][j] < min_in_row) min_in_row = matrix[i][j];
         }
-        #pragma omp critical
-        {
-            if (min_in_row > max_of_mins) max_of_mins = min_in_row;
-        }
+        if (min_in_row > max_of_mins) max_of_mins = min_in_row;
     }
     return max_of_mins;
 }

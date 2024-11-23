@@ -32,7 +32,7 @@ int max_of_row_mins_parallel(const std::vector<std::vector<int>>& matrix, const 
     int max_of_mins = std::numeric_limits<int>::min();
 
     // Параллельная секция с выбором типа распределения итераций
-    #pragma omp parallel for schedule(runtime)
+    #pragma omp parallel for schedule(runtime) reduction(max:max_of_mins)
     for (int i = 0; i < matrix.size(); i++) {
         int min_in_row = std::numeric_limits<int>::max();
         for (int j = 0; j < matrix[i].size(); j++) {
@@ -40,12 +40,8 @@ int max_of_row_mins_parallel(const std::vector<std::vector<int>>& matrix, const 
                 min_in_row = matrix[i][j];
             }
         }
-
-        #pragma omp critical
-        {
-            if (min_in_row > max_of_mins) {
-                max_of_mins = min_in_row;
-            }
+        if (min_in_row > max_of_mins) {
+            max_of_mins = min_in_row;
         }
     }
     return max_of_mins;
