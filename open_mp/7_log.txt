@@ -1,0 +1,60 @@
+Vector size: 1000
+Sequential method time: 0.00266 ms
+--------------------------------------
+Vector size: 1000
+Atomic method time: 3.48998 ms
+--------------------------------------
+Vector size: 1000
+Critical method time: 0.08676 ms
+--------------------------------------
+Vector size: 1000
+Lock method time: 4.71396 ms
+--------------------------------------
+Vector size: 1000
+Reduction clause method time: 0.05748 ms
+--------------------------------------
+Vector size: 10000
+Sequential method time: 0.01848 ms
+--------------------------------------
+Vector size: 10000
+Atomic method time: 0.23962 ms
+--------------------------------------
+Vector size: 10000
+Critical method time: 0.35802 ms
+--------------------------------------
+Vector size: 10000
+Lock method time: 50.6048 ms
+--------------------------------------
+Vector size: 10000
+Reduction clause method time: 0.061 ms
+--------------------------------------
+Vector size: 100000
+Sequential method time: 0.17716 ms
+--------------------------------------
+Vector size: 100000
+Atomic method time: 2.28016 ms
+--------------------------------------
+Vector size: 100000
+Critical method time: 3.0337 ms
+--------------------------------------
+Vector size: 100000
+Lock method time: 526.121 ms
+--------------------------------------
+Vector size: 100000
+Reduction clause method time: 0.1226 ms
+--------------------------------------
+Vector size: 1000000
+Sequential method time: 1.69 ms
+--------------------------------------
+Vector size: 1000000
+Atomic method time: 22.8207 ms
+--------------------------------------
+Vector size: 1000000
+Critical method time: 22.6944 ms
+--------------------------------------
+Vector size: 1000000
+Lock method time: 5231.23 ms
+--------------------------------------
+Vector size: 1000000
+Reduction clause method time: 0.44898 ms
+--------------------------------------

@@ -1,0 +1,112 @@
+
+Band matrix results for size 10:
+Schedule: static
+Sequential method time: 0.00212 ms
+Parallel method time: 4.25038 ms
+--------------------------------------
+Schedule: dynamic
+Sequential method time: 0.00214 ms
+Parallel method time: 0.2231 ms
+--------------------------------------
+Schedule: guided
+Sequential method time: 0.00204 ms
+Parallel method time: 0.1208 ms
+--------------------------------------
+
+Lower triangular matrix results for size 10:
+Schedule: static
+Sequential method time: 0.0018 ms
+Parallel method time: 0.08796 ms
+--------------------------------------
+Schedule: dynamic
+Sequential method time: 0.00154 ms
+Parallel method time: 0.1696 ms
+--------------------------------------
+Schedule: guided
+Sequential method time: 0.00136 ms
+Parallel method time: 0.0958 ms
+--------------------------------------
+
+Band matrix results for size 100:
+Schedule: static
+Sequential method time: 0.1748 ms
+Parallel method time: 0.09124 ms
+--------------------------------------
+Schedule: dynamic
+Sequential method time: 0.07254 ms
+Parallel method time: 0.09314 ms
+--------------------------------------
+Schedule: guided
+Sequential method time: 0.07952 ms
+Parallel method time: 0.10386 ms
+--------------------------------------
+
+Lower triangular matrix results for size 100:
+Schedule: static
+Sequential method time: 0.0991 ms
+Parallel method time: 0.10998 ms
+--------------------------------------
+Schedule: dynamic
+Sequential method time: 0.09032 ms
+Parallel method time: 0.13532 ms
+--------------------------------------
+Schedule: guided
+Sequential method time: 0.09182 ms
+Parallel method time: 0.10326 ms
+--------------------------------------
+
+Band matrix results for size 1000:
+Schedule: static
+Sequential method time: 8.04856 ms
+Parallel method time: 2.1894 ms
+--------------------------------------
+Schedule: dynamic
+Sequential method time: 7.84602 ms
+Parallel method time: 2.51858 ms
+--------------------------------------
+Schedule: guided
+Sequential method time: 8.32084 ms
+Parallel method time: 2.08384 ms
+--------------------------------------
+
+Lower triangular matrix results for size 1000:
+Schedule: static
+Sequential method time: 7.47456 ms
+Parallel method time: 2.34414 ms
+--------------------------------------
+Schedule: dynamic
+Sequential method time: 7.75778 ms
+Parallel method time: 2.16956 ms
+--------------------------------------
+Schedule: guided
+Sequential method time: 8.31812 ms
+Parallel method time: 1.96186 ms
+--------------------------------------
+
+Band matrix results for size 10000:
+Schedule: static
+Sequential method time: 732.064 ms
+Parallel method time: 190.409 ms
+--------------------------------------
+Schedule: dynamic
+Sequential method time: 701.713 ms
+Parallel method time: 215.437 ms
+--------------------------------------
+Schedule: guided
+Sequential method time: 759.252 ms
+Parallel method time: 200.478 ms
+--------------------------------------
+
+Lower triangular matrix results for size 10000:
+Schedule: static
+Sequential method time: 713.919 ms
+Parallel method time: 183.075 ms
+--------------------------------------
+Schedule: dynamic
+Sequential method time: 722.959 ms
+Parallel method time: 202.054 ms
+--------------------------------------
+Schedule: guided
+Sequential method time: 692.635 ms
+Parallel method time: 210.097 ms
+--------------------------------------

@@ -1,0 +1,15 @@
+Matrix size: 10
+Sequential method time: 0.00108 ms
+Nested parallelism time: 128.305 ms
+Non-nested parallelism time: 1.73264 ms
+--------------------------------------
+Matrix size: 100
+Sequential method time: 1.58558 ms
+Nested parallelism time: 1057.65 ms
+Non-nested parallelism time: 1.3925 ms
+--------------------------------------
+Matrix size: 1000
+Sequential method time: 12.6279 ms
+Nested parallelism time: 10428.7 ms
+Non-nested parallelism time: 3.36772 ms
+--------------------------------------

@@ -1,0 +1,24 @@
+Vector size: 1000
+Sequential method time: 0.00812 ms
+Reduction method time: 5.41364 ms
+--------------------------------------
+Vector size: 10000
+Sequential method time: 0.05956 ms
+Reduction method time: 0.1195 ms
+--------------------------------------
+Vector size: 100000
+Sequential method time: 0.41344 ms
+Reduction method time: 0.198 ms
+--------------------------------------
+Vector size: 1000000
+Sequential method time: 4.2213 ms
+Reduction method time: 1.1604 ms
+--------------------------------------
+Vector size: 10000000
+Sequential method time: 49.3806 ms
+Reduction method time: 16.429 ms
+--------------------------------------
+Vector size: 100000000
+Sequential method time: 493.506 ms
+Reduction method time: 86.0562 ms
+--------------------------------------

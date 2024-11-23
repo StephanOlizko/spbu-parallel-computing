@@ -1,0 +1,13 @@
+Performance of different schedules with non-uniform workload:
+Schedule: static
+Sequential method time: 0.128173 seconds
+Parallel method time: 0.0273414 seconds
+--------------------------------------
+Schedule: dynamic
+Sequential method time: 0.128861 seconds
+Parallel method time: 0.0288184 seconds
+--------------------------------------
+Schedule: guided
+Sequential method time: 0.126117 seconds
+Parallel method time: 0.0237274 seconds
+--------------------------------------

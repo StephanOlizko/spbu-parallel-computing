@@ -1,0 +1,20 @@
+Integration limits: [0, 1]
+Sequential method time: 3.76888 ms
+Parallel method time: 5.18094 ms
+--------------------------------------
+Integration limits: [0, 10]
+Sequential method time: 3.68822 ms
+Parallel method time: 1.15508 ms
+--------------------------------------
+Integration limits: [0, 100]
+Sequential method time: 3.82616 ms
+Parallel method time: 1.02912 ms
+--------------------------------------
+Integration limits: [0, 1000]
+Sequential method time: 3.65788 ms
+Parallel method time: 1.06856 ms
+--------------------------------------
+Integration limits: [0, 10000]
+Sequential method time: 3.67974 ms
+Parallel method time: 1.05662 ms
+--------------------------------------

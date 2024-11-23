@@ -1,0 +1,12 @@
+Matrix size: 100
+Sequential method time: 0.15556 ms
+Parallel method time: 4.47268 ms
+--------------------------------------
+Matrix size: 1000
+Sequential method time: 7.25064 ms
+Parallel method time: 2.79482 ms
+--------------------------------------
+Matrix size: 10000
+Sequential method time: 762.52 ms
+Parallel method time: 136.412 ms
+--------------------------------------

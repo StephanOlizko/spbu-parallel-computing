@@ -1,0 +1,20 @@
+Vector size: 1000
+Sequential method time: 0.46606 ms
+Parallel method time: 4.91134 ms
+--------------------------------------
+Vector size: 10000
+Sequential method time: 4.30654 ms
+Parallel method time: 3.92682 ms
+--------------------------------------
+Vector size: 100000
+Sequential method time: 46.6197 ms
+Parallel method time: 46.3265 ms
+--------------------------------------
+Vector size: 1000000
+Sequential method time: 453.41 ms
+Parallel method time: 383.793 ms
+--------------------------------------
+Vector size: 10000000
+Sequential method time: 4272.14 ms
+Parallel method time: 3766.83 ms
+--------------------------------------
