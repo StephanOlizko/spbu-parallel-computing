@@ -1,0 +1,11 @@
+operation,time,method
+Broadcast,0.0252622,Pairwise
+Scatter,3.0977e-05,Pairwise
+Gather,0.016454,Pairwise
+Reduce,5.1371e-05,Pairwise
+AllGather,0.0209926,Pairwise
+Broadcast,0.0212847,MPI
+Scatter,0.293574,MPI
+Gather,0.0211326,MPI
+Reduce,0.000106429,MPI
+AllGather,0.00235574,MPI

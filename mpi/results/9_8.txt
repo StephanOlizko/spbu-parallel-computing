@@ -1,0 +1,11 @@
+Operation,Type,Time (seconds)
+Broadcast,pairwise,0.0238813
+Scatter,pairwise,2.6424e-05
+Gather,pairwise,0.0262176
+Reduce,pairwise,2.8212e-05
+AllGather,pairwise,0.000335906
+Broadcast,MPI,0.021073
+Scatter,MPI,0.0440195
+Gather,MPI,0.0207773
+Reduce,MPI,9.073e-05
+AllGather,MPI,0.00078048
