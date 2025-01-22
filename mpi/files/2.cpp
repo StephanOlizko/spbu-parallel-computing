@@ -1,73 +1,73 @@
 #include <mpi.h>
 #include <iostream>
 #include <vector>
-#include <cstdlib>
-#include <ctime>
-#include <numeric> // Для std::inner_product
+#include <numeric>
+#include <chrono>
+
+long long seq_dot_prod(const std::vector<int>& v1, const std::vector<int>& v2) {
+    return std::inner_product(v1.begin(), v1.end(), v2.begin(), 0LL);
+}
+
+long long par_dot_prod(const std::vector<int>& v1, const std::vector<int>& v2, int rank, int size) {
+    int N = v1.size();
+    int local_N = N / size;
+    std::vector<int> local_v1(local_N), local_v2(local_N);
+
+    MPI_Scatter(v1.data(), local_N, MPI_INT, local_v1.data(), local_N, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Scatter(v2.data(), local_N, MPI_INT, local_v2.data(), local_N, MPI_INT, 0, MPI_COMM_WORLD);
+
+    long long local_res = std::inner_product(local_v1.begin(), local_v1.end(), local_v2.begin(), 0LL);
+
+    long long global_res = 0;
+    MPI_Reduce(&local_res, &global_res, 1, MPI_LONG_LONG, MPI_SUM, 0, MPI_COMM_WORLD);
+
+    return global_res;
+}
 
 int main(int argc, char** argv) {
     MPI_Init(&argc, &argv);
 
     int rank, size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank); // Ранг процесса
-    MPI_Comm_size(MPI_COMM_WORLD, &size); // Число процессов
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    // Массив размеров векторов для тестирования
-    std::vector<int> vector_sizes = {1000, 10000, 100000, 1000000, 10000000};
+    std::vector<int> vec_sizes = {1000, 10000, 100000, 1000000, 10000000};
 
     if (rank == 0) {
-        // Вывод заголовка таблицы
-        std::cout << "vector_size,process_count,seq_time,par_time,result\n";
+        std::cout << "vec_size,proc_count,seq_time,par_time,result\n";
     }
 
-    for (int N : vector_sizes) {
-        std::vector<int> vec1, vec2;
-        int local_size = N / size; // Размер подмассива для каждого процесса
-        std::vector<int> local_vec1(local_size), local_vec2(local_size);
-
-        double seq_start_time = 0.0, seq_end_time = 0.0;
-        long long scalar_result_seq = 0;
-
+    for (int N : vec_sizes) {
+        std::vector<int> v1, v2;
         if (rank == 0) {
-            // Генерация данных
-            vec1.resize(N);
-            vec2.resize(N);
+            v1.resize(N);
+            v2.resize(N);
             std::srand(static_cast<unsigned>(std::time(0)));
             for (int i = 0; i < N; ++i) {
-                vec1[i] = std::rand() % 100;
-                vec2[i] = std::rand() % 100;
+                v1[i] = std::rand() % 1000;
+                v2[i] = std::rand() % 1000;
             }
-
-            // Последовательное вычисление скалярного произведения
-            seq_start_time = MPI_Wtime();
-            scalar_result_seq = std::inner_product(vec1.begin(), vec1.end(), vec2.begin(), 0LL);
-            seq_end_time = MPI_Wtime();
         }
 
-        // Начало замера параллельного времени
-        double par_start_time = MPI_Wtime();
+        auto seq_start = std::chrono::high_resolution_clock::now();
+        long long seq_res = 0;
+        if (rank == 0) {
+            seq_res = seq_dot_prod(v1, v2);
+        }
+        auto seq_end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> seq_time = seq_end - seq_start;
 
-        // Распределение данных между процессами
-        MPI_Scatter(vec1.data(), local_size, MPI_INT, local_vec1.data(), local_size, MPI_INT, 0, MPI_COMM_WORLD);
-        MPI_Scatter(vec2.data(), local_size, MPI_INT, local_vec2.data(), local_size, MPI_INT, 0, MPI_COMM_WORLD);
+        auto par_start = std::chrono::high_resolution_clock::now();
+        long long global_res = par_dot_prod(v1, v2, rank, size);
+        auto par_end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> par_time = par_end - par_start;
 
-        // Локальное вычисление скалярного произведения
-        long long local_result = std::inner_product(local_vec1.begin(), local_vec1.end(), local_vec2.begin(), 0LL);
-
-        // Глобальное суммирование локальных результатов
-        long long global_result = 0;
-        MPI_Reduce(&local_result, &global_result, 1, MPI_LONG_LONG, MPI_SUM, 0, MPI_COMM_WORLD);
-
-        // Конец замера параллельного времени
-        double par_end_time = MPI_Wtime();
-
-        // Вывод результатов в таблицу
         if (rank == 0) {
             std::cout << N << ","
                       << size << ","
-                      << seq_end_time - seq_start_time << ","
-                      << par_end_time - par_start_time << ","
-                      << global_result << "\n";
+                      << seq_time.count() << ","
+                      << par_time.count() << ","
+                      << global_res << "\n";
         }
     }
 

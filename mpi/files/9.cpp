@@ -4,81 +4,67 @@
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
 
-// Реализация операции Broadcast с использованием парных обменов
-void mpi_broadcast_pairwise(int* data, int size, int rank, int n_processes) {
+void mpi_broadcast(int* data, int size, int rank, int n_procs) {
     int partner;
-    // Параллельный обмен данных между процессами
-    for (int step = 1; step < n_processes; step *= 2) {
-        partner = rank ^ step; // Вычисляем партнера для обмена (по принципу XOR)
-        if (partner < n_processes) {
+    for (int step = 1; step < n_procs; step *= 2) {
+        partner = rank ^ step;
+        if (partner < n_procs) {
             if (rank < partner) {
-                // Если процесс с меньшим рангом, он отправляет данные
                 MPI_Send(data, size, MPI_INT, partner, 0, MPI_COMM_WORLD);
             } else {
-                // Если процесс с большим рангом, он получает данные
                 MPI_Recv(data, size, MPI_INT, partner, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             }
         }
     }
 }
 
-// Реализация операции Scatter с использованием парных обменов
-void mpi_scatter_pairwise(int* data, int* local_data, int size, int rank, int n_processes) {
-    int chunk_size = size / n_processes; // Размер блока данных для каждого процесса
+void mpi_scatter(int* data, int* local_data, int size, int rank, int n_procs) {
+    int chunk_size = size / n_procs;
     int partner;
-    // Параллельный обмен данных
-    for (int step = 1; step < n_processes; step *= 2) {
+    for (int step = 1; step < n_procs; step *= 2) {
         partner = rank ^ step;
-        if (partner < n_processes) {
+        if (partner < n_procs) {
             if (rank < partner) {
-                // Если процесс с меньшим рангом, он отправляет данные
                 MPI_Send(data + rank * chunk_size, chunk_size, MPI_INT, partner, 0, MPI_COMM_WORLD);
             } else {
-                // Если процесс с большим рангом, он получает данные
                 MPI_Recv(local_data, chunk_size, MPI_INT, partner, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             }
         }
     }
 }
 
-// Реализация операции Gather с использованием парных обменов
-void mpi_gather_pairwise(int* local_data, int* data, int size, int rank, int n_processes) {
-    int chunk_size = size / n_processes; // Размер блока данных для каждого процесса
+void mpi_gather(int* local_data, int* data, int size, int rank, int n_procs) {
+    int chunk_size = size / n_procs;
     int partner;
-    // Параллельный обмен данных
-    for (int step = 1; step < n_processes; step *= 2) {
+    for (int step = 1; step < n_procs; step *= 2) {
         partner = rank ^ step;
-        if (partner < n_processes) {
+        if (partner < n_procs) {
             if (rank < partner) {
-                // Если процесс с меньшим рангом, он получает данные
                 MPI_Recv(data + partner * chunk_size, chunk_size, MPI_INT, partner, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             } else {
-                // Если процесс с большим рангом, он отправляет данные
                 MPI_Send(local_data, chunk_size, MPI_INT, partner, 0, MPI_COMM_WORLD);
             }
         }
     }
 }
 
-// Реализация операции Reduce с использованием парных обменов
-void mpi_reduce_pairwise(int* data, int* result, int size, int rank, int n_processes) {
+void mpi_reduce(int* data, int* result, int size, int rank, int n_procs) {
     int partner;
-    // Параллельный обмен данных с операцией свертки (например, минимум)
-    for (int step = 1; step < n_processes; step *= 2) {
+    for (int step = 1; step < n_procs; step *= 2) {
         partner = rank ^ step;
-        if (partner < n_processes) {
+        if (partner < n_procs) {
             if (rank < partner) {
-                // Если процесс с меньшим рангом, он отправляет данные
                 MPI_Send(data, size, MPI_INT, partner, 0, MPI_COMM_WORLD);
                 break;
             } else {
-                // Если процесс с большим рангом, он получает данные и выполняет операцию
                 MPI_Recv(result, size, MPI_INT, partner, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
                 for (int i = 0; i < size; i++) {
-                    result[i] = std::min(result[i], data[i]); // Например, минимизация
+                    result[i] = std::min(result[i], data[i]);
                 }
                 break;
             }
@@ -86,150 +72,140 @@ void mpi_reduce_pairwise(int* data, int* result, int size, int rank, int n_proce
     }
 }
 
-// Реализация операции AllGather с использованием парных обменов
-void mpi_allgather_pairwise(int* local_data, int* data, int size, int rank, int n_processes) {
-    int chunk_size = size / n_processes; // Размер блока данных для каждого процесса
+void mpi_allgather(int* local_data, int* data, int size, int rank, int n_procs) {
+    int chunk_size = size / n_procs;
     int partner;
-    // Параллельный обмен данных
-    for (int step = 1; step < n_processes; step *= 2) {
+    for (int step = 1; step < n_procs; step *= 2) {
         partner = rank ^ step;
-        if (partner < n_processes) {
+        if (partner < n_procs) {
             if (rank < partner) {
-                // Если процесс с меньшим рангом, он получает данные
                 MPI_Recv(data + partner * chunk_size, chunk_size, MPI_INT, partner, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             } else {
-                // Если процесс с большим рангом, он отправляет данные
                 MPI_Send(local_data, chunk_size, MPI_INT, partner, 0, MPI_COMM_WORLD);
             }
         }
     }
 }
 
-
 int main(int argc, char** argv) {
     MPI_Init(&argc, &argv);
 
-    int rank, size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank); // Ранг процесса
-    MPI_Comm_size(MPI_COMM_WORLD, &size); // Число процессов
+    int rank, n_procs;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &n_procs);
 
-    int vector_size = 10000; // Размер вектора для тестирования
-    std::vector<int> data(vector_size, 0);
-    std::vector<int> local_data(vector_size / size, 0);
+    int vec_size = 10000;
+    std::vector<int> data(vec_size, 0);
+    std::vector<int> local_data(vec_size / n_procs, 0);
 
-    // Инициализация данных в процессе с рангом 0
     if (rank == 0) {
-        for (int i = 0; i < vector_size; i++) {
-            data[i] = rand() % 100; // Заполнение случайными числами
+        for (int i = 0; i < vec_size; i++) {
+            data[i] = rand() % 100;
         }
     }
-
-    double start_time, end_time;
 
     if (rank == 0) {
         std::cout << "Operation,Time (seconds)" << std::endl;
     }
 
-    // Тестирование Broadcast с использованием парных обменов
     if (rank == 0) {
-        start_time = MPI_Wtime();
-    }
-    mpi_broadcast_pairwise(data.data(), vector_size, rank, size);
-    if (rank == 0) {
-        end_time = MPI_Wtime();
-        std::cout << "Broadcast (pairwise)," << end_time - start_time << std::endl;
-    }
-
-    // Тестирование Scatter с использованием парных обменов
-    if (rank == 0) {
-        start_time = MPI_Wtime();
-    }
-    mpi_scatter_pairwise(data.data(), local_data.data(), vector_size, rank, size);
-    if (rank == 0) {
-        end_time = MPI_Wtime();
-        std::cout << "Scatter (pairwise)," << end_time - start_time << std::endl;
+        auto start_time = high_resolution_clock::now();
+        mpi_broadcast(data.data(), vec_size, rank, n_procs);
+        auto end_time = high_resolution_clock::now();
+        duration<double> elapsed = end_time - start_time;
+        std::cout << "Broadcast (pairwise)," << elapsed.count() << std::endl;
+    } else {
+        mpi_broadcast(data.data(), vec_size, rank, n_procs);
     }
 
-    // Тестирование Gather с использованием парных обменов
     if (rank == 0) {
-        start_time = MPI_Wtime();
-    }
-    mpi_gather_pairwise(local_data.data(), data.data(), vector_size, rank, size);
-    if (rank == 0) {
-        end_time = MPI_Wtime();
-        std::cout << "Gather (pairwise)," << end_time - start_time << std::endl;
-    }
-
-    // Тестирование Reduce с использованием парных обменов
-    if (rank == 0) {
-        start_time = MPI_Wtime();
-    }
-    mpi_reduce_pairwise(data.data(), data.data(), vector_size, rank, size);
-    if (rank == 0) {
-        end_time = MPI_Wtime();
-        std::cout << "Reduce (pairwise)," << end_time - start_time << std::endl;
+        auto start_time = high_resolution_clock::now();
+        mpi_scatter(data.data(), local_data.data(), vec_size, rank, n_procs);
+        auto end_time = high_resolution_clock::now();
+        duration<double> elapsed = end_time - start_time;
+        std::cout << "Scatter (pairwise)," << elapsed.count() << std::endl;
+    } else {
+        mpi_scatter(data.data(), local_data.data(), vec_size, rank, n_procs);
     }
 
-    // Тестирование AllGather с использованием парных обменов
     if (rank == 0) {
-        start_time = MPI_Wtime();
-    }
-    mpi_allgather_pairwise(local_data.data(), data.data(), vector_size, rank, size);
-    if (rank == 0) {
-        end_time = MPI_Wtime();
-        std::cout << "AllGather (pairwise)," << end_time - start_time << std::endl;
-    }
-
-    // Сравнение с встроенными функциями MPI
-
-    // Тестирование Broadcast с использованием MPI_Bcast
-    if (rank == 0) {
-        start_time = MPI_Wtime();
-    }
-    MPI_Bcast(data.data(), vector_size, MPI_INT, 0, MPI_COMM_WORLD);
-    if (rank == 0) {
-        end_time = MPI_Wtime();
-        std::cout << "Broadcast (MPI_Bcast)," << end_time - start_time << std::endl;
+        auto start_time = high_resolution_clock::now();
+        mpi_gather(local_data.data(), data.data(), vec_size, rank, n_procs);
+        auto end_time = high_resolution_clock::now();
+        duration<double> elapsed = end_time - start_time;
+        std::cout << "Gather (pairwise)," << elapsed.count() << std::endl;
+    } else {
+        mpi_gather(local_data.data(), data.data(), vec_size, rank, n_procs);
     }
 
-    // Тестирование Scatter с использованием MPI_Scatter
     if (rank == 0) {
-        start_time = MPI_Wtime();
-    }
-    MPI_Scatter(data.data(), vector_size / size, MPI_INT, local_data.data(), vector_size / size, MPI_INT, 0, MPI_COMM_WORLD);
-    if (rank == 0) {
-        end_time = MPI_Wtime();
-        std::cout << "Scatter (MPI_Scatter)," << end_time - start_time << std::endl;
-    }
-
-    // Тестирование Gather с использованием MPI_Gather
-    if (rank == 0) {
-        start_time = MPI_Wtime();
-    }
-    MPI_Gather(local_data.data(), vector_size / size, MPI_INT, data.data(), vector_size / size, MPI_INT, 0, MPI_COMM_WORLD);
-    if (rank == 0) {
-        end_time = MPI_Wtime();
-        std::cout << "Gather (MPI_Gather)," << end_time - start_time << std::endl;
+        auto start_time = high_resolution_clock::now();
+        mpi_reduce(data.data(), data.data(), vec_size, rank, n_procs);
+        auto end_time = high_resolution_clock::now();
+        duration<double> elapsed = end_time - start_time;
+        std::cout << "Reduce (pairwise)," << elapsed.count() << std::endl;
+    } else {
+        mpi_reduce(data.data(), data.data(), vec_size, rank, n_procs);
     }
 
-    // Тестирование Reduce с использованием MPI_Reduce
     if (rank == 0) {
-        start_time = MPI_Wtime();
-    }
-    MPI_Reduce(local_data.data(), data.data(), vector_size / size, MPI_INT, MPI_MIN, 0, MPI_COMM_WORLD);
-    if (rank == 0) {
-        end_time = MPI_Wtime();
-        std::cout << "Reduce (MPI_Reduce)," << end_time - start_time << std::endl;
+        auto start_time = high_resolution_clock::now();
+        mpi_allgather(local_data.data(), data.data(), vec_size, rank, n_procs);
+        auto end_time = high_resolution_clock::now();
+        duration<double> elapsed = end_time - start_time;
+        std::cout << "AllGather (pairwise)," << elapsed.count() << std::endl;
+    } else {
+        mpi_allgather(local_data.data(), data.data(), vec_size, rank, n_procs);
     }
 
-    // Тестирование AllGather с использованием MPI_AllGather
     if (rank == 0) {
-        start_time = MPI_Wtime();
+        auto start_time = high_resolution_clock::now();
+        MPI_Bcast(data.data(), vec_size, MPI_INT, 0, MPI_COMM_WORLD);
+        auto end_time = high_resolution_clock::now();
+        duration<double> elapsed = end_time - start_time;
+        std::cout << "Broadcast (MPI_Bcast)," << elapsed.count() << std::endl;
+    } else {
+        MPI_Bcast(data.data(), vec_size, MPI_INT, 0, MPI_COMM_WORLD);
     }
-    MPI_Allgather(local_data.data(), vector_size / size, MPI_INT, data.data(), vector_size / size, MPI_INT, MPI_COMM_WORLD);
+
     if (rank == 0) {
-        end_time = MPI_Wtime();
-        std::cout << "AllGather (MPI_Allgather)," << end_time - start_time << std::endl;
+        auto start_time = high_resolution_clock::now();
+        MPI_Scatter(data.data(), vec_size / n_procs, MPI_INT, local_data.data(), vec_size / n_procs, MPI_INT, 0, MPI_COMM_WORLD);
+        auto end_time = high_resolution_clock::now();
+        duration<double> elapsed = end_time - start_time;
+        std::cout << "Scatter (MPI_Scatter)," << elapsed.count() << std::endl;
+    } else {
+        MPI_Scatter(data.data(), vec_size / n_procs, MPI_INT, local_data.data(), vec_size / n_procs, MPI_INT, 0, MPI_COMM_WORLD);
+    }
+
+    if (rank == 0) {
+        auto start_time = high_resolution_clock::now();
+        MPI_Gather(local_data.data(), vec_size / n_procs, MPI_INT, data.data(), vec_size / n_procs, MPI_INT, 0, MPI_COMM_WORLD);
+        auto end_time = high_resolution_clock::now();
+        duration<double> elapsed = end_time - start_time;
+        std::cout << "Gather (MPI_Gather)," << elapsed.count() << std::endl;
+    } else {
+        MPI_Gather(local_data.data(), vec_size / n_procs, MPI_INT, data.data(), vec_size / n_procs, MPI_INT, 0, MPI_COMM_WORLD);
+    }
+
+    if (rank == 0) {
+        auto start_time = high_resolution_clock::now();
+        MPI_Reduce(local_data.data(), data.data(), vec_size / n_procs, MPI_INT, MPI_MIN, 0, MPI_COMM_WORLD);
+        auto end_time = high_resolution_clock::now();
+        duration<double> elapsed = end_time - start_time;
+        std::cout << "Reduce (MPI_Reduce)," << elapsed.count() << std::endl;
+    } else {
+        MPI_Reduce(local_data.data(), data.data(), vec_size / n_procs, MPI_INT, MPI_MIN, 0, MPI_COMM_WORLD);
+    }
+
+    if (rank == 0) {
+        auto start_time = high_resolution_clock::now();
+        MPI_Allgather(local_data.data(), vec_size / n_procs, MPI_INT, data.data(), vec_size / n_procs, MPI_INT, MPI_COMM_WORLD);
+        auto end_time = high_resolution_clock::now();
+        duration<double> elapsed = end_time - start_time;
+        std::cout << "AllGather (MPI_Allgather)," << elapsed.count() << std::endl;
+    } else {
+        MPI_Allgather(local_data.data(), vec_size / n_procs, MPI_INT, data.data(), vec_size / n_procs, MPI_INT, MPI_COMM_WORLD);
     }
 
     MPI_Finalize();
